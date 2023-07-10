@@ -4,6 +4,7 @@ const { nodeResolve } = require('@rollup/plugin-node-resolve')
 const { babel } = require('@rollup/plugin-babel')
 const copy = require('rollup-plugin-copy')
 const pckg = require('../package.json')
+const sourcemaps = require('rollup-plugin-sourcemaps')
 const typescript = require('typescript')
 
 const FILENAME = 'fuse'
@@ -141,13 +142,15 @@ function genConfig(options) {
 
   const config = {
     input: resolve('src/entry.js'),
-    plugins: [nodeResolve(), ...(options.plugins || [])],
+    plugins: [sourcemaps(), nodeResolve(), ...(options.plugins || [])],
     output: {
       banner,
       file: resolve(options.dest),
       format: options.format,
+      // format: 'iife',
       name: 'Fuse',
-      exports: 'default'
+      exports: 'default',
+      sourcemap: true,
     }
   }
 
@@ -169,6 +172,7 @@ function genConfig(options) {
     config.plugins.push(babel({ babelHelpers: 'bundled' }))
   }
 
+  // console.log("Final config", config);
   return config
 }
 
